@@ -14,9 +14,6 @@ import sys
 background_colour = (220, 220, 220)
 width = 800
 height = 800
-screen = pg.display.set_mode((width, height), 0, 32)
-pg.display.set_caption('Workshop Minimax')
-screen.fill(background_colour)
 
 ## board size for every difficulty
 difficulties = {
@@ -26,14 +23,14 @@ difficulties = {
 }
 
 class Board:
-    def __init__(self, difficulty):
+    def __init__(self, difficulty, screen):
         self.__size = difficulties[difficulty]
         self.__square_size = int(800 / self.__size)
         self.__padd = 0
         self.__board = [[0 for _ in range(self.__size)] for _ in range(self.__size)]
-        self.__draw_board()
+        self.__draw_board(screen)
     
-    def __draw_board(self):
+    def __draw_board(self, screen):
         screen.fill(background_colour)
         self.__square_size = 800 / self.__size
         self.__padd = int((5 * (self.__size - 1)) / 2)
@@ -47,8 +44,9 @@ class Board:
             y_pos += (self.__square_size - 5)
         pg.display.update()
     
-    ## draw last player move
-    def __draw_play(self, y, x, player):
+    ## draw last player movegit@github.com:Leonov-S/workshopTictactoe.git
+
+    def __draw_play(self, y, x, player, screen):
         size = self.__square_size - 5
         x_pos = (x * size + self.__padd + size / 2)
         y_pos = (y * size + self.__padd + size / 2)
@@ -65,7 +63,7 @@ class Board:
         pg.display.update()
     
     ## get mouse pos on board
-    def coords_from_mouse(self, coord):
+    def coords_from_mouse(self, coord, screen):
         (x, y) = coord
         if (x > (800 - self.__padd)) or (x < self.__padd):
             print("ERROR: Out of bound")
@@ -77,7 +75,7 @@ class Board:
         x_pos = int((x - (self.__padd)) / size)
         y_pos = int((y - (self.__padd)) / size)
 
-        return (self.__set_value(x_pos, y_pos, 1))
+        return (self.__set_value(x_pos, y_pos, 1, screen))
     
     ## check win around the last move
     def __check_win(self, last_move):
@@ -127,7 +125,7 @@ class Board:
 
     ## set the last move on the board if the move is permited,
     #   then checks if it's a winning   move
-    def __set_value(self, x, y, player):
+    def __set_value(self, x, y, player, screen):
         if (x < 0 or x > (self.__size - 1)):
             print("ERROR: Out of bound", "x:", x," y:", y)
             return -1
@@ -138,7 +136,7 @@ class Board:
             print("ERROR: Case not empty")
             return -1
         self.__board[y][x] = player
-        self.__draw_play(y, x, player)
+        self.__draw_play(y, x, player, screen)
         if (self.__check_win((x, y))):
             return 1
         return 0
@@ -154,7 +152,7 @@ class Board:
         return self.__board[y][x]
 
     
-    def game_loop(self):
+    def game_loop(self, screen):
         running = True
         player = 1
         turn = 0
@@ -167,7 +165,7 @@ class Board:
                     return True
                 if (player == 1):
                     if ((event.type == pg.MOUSEBUTTONDOWN) and pg.mouse.get_pressed()[0]):
-                        play = self.coords_from_mouse(pg.mouse.get_pos())
+                        play = self.coords_from_mouse(pg.mouse.get_pos(), screen)
                         if (play == 1):
                             print("Human win")
                             player = -1
@@ -180,7 +178,7 @@ class Board:
                                 player = 2
             if (player == 2):
                 (x, y) = playMove(self.__board)
-                play = self.__set_value(x, y, 2)
+                play = self.__set_value(x, y, 2, screen)
                 if (play == 1):
                     print("Bot win")
                     player = -1
@@ -217,9 +215,12 @@ def main():
         difficulty = '1'
     game = True
     print("START")
+    screen = pg.display.set_mode((width, height), 0, 32)
+    pg.display.set_caption('Workshop Minimax')
+    screen.fill(background_colour)
     while(game):
-        board = Board(difficulty)
-        game = board.game_loop()
+        board = Board(difficulty, screen)
+        game = board.game_loop(screen)
     print("END")
 
 if __name__=="__main__":
