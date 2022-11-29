@@ -82,46 +82,51 @@ class Board:
         (x, y) = last_move
         player = self.get_value(x, y)
 
-        # horizontal
-        if (self.get_value(x + 1, y) == player):
-            if (self.get_value(x + 2, y) == player):
+        if self.__size == 15:
+            win_row = 4
+        else:
+            win_row = 2
+
+        # loop check
+        check_h = 0
+        check_dd = 0
+        check_du = 0
+        check_v = 0
+        for i in range(-win_row, win_row + 1):
+            #horizontal
+            if self.get_value(x + i, y) != player:
+                check_h = 0
+            elif self.get_value(x + i, y) == player:
+                check_h += 1
+            if (check_h == win_row + 1):
                 return True
-            if (self.get_value(x - 1, y) == player):
+            
+            #vertical
+            if self.get_value(x, y + i) != player:
+                check_v = 0
+            elif self.get_value(x, y + i) == player:
+                check_v += 1
+            if (check_v == win_row + 1):
                 return True
-        if (self.get_value(x - 1, y) == player):
-            if (self.get_value(x - 2, y) == player):
-                return True
-        
-        # vertical
-        if (self.get_value(x, y + 1) == player):
-            if (self.get_value(x, y + 2) == player):
-                return True
-            if (self.get_value(x, y - 1) == player):
-                return True
-        if (self.get_value(x, y - 1) == player):
-            if (self.get_value(x, y - 2) == player):
-                return True
-        
-        # diagonal_left
-        if (self.get_value(x + 1, y + 1) == player):
-            if (self.get_value(x + 2, y + 2) == player):
-                return True
-            if (self.get_value(x - 1, y - 1) == player):
-                return True
-        if (self.get_value(x - 1, y - 1) == player):
-            if (self.get_value(x - 2, y - 2) == player):
+            
+            #diagonal down
+            if self.get_value(x + i, y + i) != player:
+                check_dd = 0
+            if self.get_value(x + i, y + i) == player:
+                check_dd += 1
+            if (check_dd == win_row + 1):
                 return True
 
-        # diagonal_right
-        if (self.get_value(x + 1, y - 1) == player):
-            if (self.get_value(x + 2, y - 2) == player):
+            #diagonal up
+            if self.get_value(x - i, y + i) != player:
+                check_du = 0
+            if self.get_value(x - i, y + i) == player:
+                check_du += 1
+            if (check_du == win_row + 1):
                 return True
-            if (self.get_value(x - 1, y + 1) == player):
-                return True
-        if (self.get_value(x - 1, y + 1) == player):
-            if (self.get_value(x - 2, y + 2) == player):
-                return True
+            
         return False
+            
 
     ## set the last move on the board if the move is permited,
     #   then checks if it's a winning   move
