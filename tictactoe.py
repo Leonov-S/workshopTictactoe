@@ -200,7 +200,7 @@ class Board:
 
 def print_help():
     print("\n./tictactoe <difficulty> \n Difficulties:")
-    print(" 1: 3x3 \n 2: 5x5 \n 3: 15x15")
+    print(" 1: 3x3 \n 2: 5x5 \n 3: 15x15 - 5 in a row")
 
 def main():
     args = sys.argv[1:]
